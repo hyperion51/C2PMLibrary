@@ -30,10 +30,43 @@ namespace Concept2
 {
     public class PerformanceMonitor
     {
-
-        public PerformanceMonitor()
+        public ushort DeviceNumber { get; set; }
+        public PerformanceMonitor(ushort DeviceNumber)
         {
+            this.DeviceNumber = DeviceNumber;
+        }
 
+        public PMUSBInterface.CSAFECommand CreateCommand()
+        {
+            return new PMUSBInterface.CSAFECommand(this.DeviceNumber);
+        }
+
+        public void Reset()
+        {
+            PMUSBInterface.CSAFECommand cmd = CreateCommand();
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_GOFINISHED_CMD);
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_GOIDLE_CMD);
+            cmd.Execute();
+        }
+
+        public void Start()
+        {
+            PMUSBInterface.CSAFECommand cmd = CreateCommand();
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_GOHAVEID_CMD);
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_GOINUSE_CMD);
+            cmd.Execute();
+        }
+
+        public void Test()
+        {
+            PMUSBInterface.CSAFECommand cmd = CreateCommand();
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_GOHAVEID_CMD);
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_SETPROGRAM_CMD);
+            cmd.CommandsBytes.Add(2);
+            cmd.CommandsBytes.Add(1);
+            cmd.CommandsBytes.Add(0);
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_GOINUSE_CMD);
+            cmd.Execute();
         }
 
     }

@@ -32,6 +32,32 @@ namespace Concept2
 
     public class PMUSBInterface
     {
+        public class CSAFECommand
+        {
+            public CSAFECommand(ushort DeviceNumber)
+            {
+                this.DeviceNumber = DeviceNumber;
+                this.CommandsBytes = new List<uint>();
+            }
+
+            public ushort DeviceNumber { get; set; }
+            public List<uint> CommandsBytes { get; set; }
+
+
+
+            public List<uint> Execute()
+            {
+                ushort datasize = 0;
+                uint[] data = new uint[64];
+                ushort error = tkcmdsetCSAFE_command(DeviceNumber, Convert.ToUInt16(CommandsBytes.Count), CommandsBytes.ToArray(), ref datasize, data);
+                if (error != 0)
+                {
+                    throw new PMUSBException("Cannot execute a command!", error);
+                }
+                return data.ToList();
+            }
+        }
+
         public class PMUSBException : Exception
         {
             public PMUSBException(string message, ushort ErrorCode) : base(message)
@@ -123,6 +149,113 @@ namespace Concept2
             PM3TESTER_PRODUCT_NAME,
             PM4_PRODUCT_NAME,
             PM5_PRODUCT_NAME,
+        }
+
+        public enum CSAFECommands : uint
+        {
+            CSAFE_GETSTATUS_CMD = 0x80,
+            CSAFE_RESET_CMD = 0x81,
+            CSAFE_GOIDLE_CMD = 0x82,
+            CSAFE_GOHAVEID_CMD = 0x83,
+            CSAFE_GOINUSE_CMD = 0x85,
+            CSAFE_GOFINISHED_CMD = 0x86,
+            CSAFE_GOREADY_CMD = 0x87,
+            CSAFE_BADID_CMD = 0x88,
+            CSAFE_GETVERSION_CMD = 0x91,
+            CSAFE_GETID_CMD = 0x92,
+            CSAFE_GETUNITS_CMD = 0x93,
+            CSAFE_GETSERIAL_CMD = 0x94,
+            CSAFE_GETLIST_CMD = 0x98,
+            CSAFE_GETUTILIZATION_CMD = 0x99,
+            CSAFE_GETMOTORCURRENT_CMD = 0x9A,
+            CSAFE_GETODOMETER_CMD = 0x9B,
+            CSAFE_GETERRORCODE_CMD = 0x9C,
+            CSAFE_GETSERVICECODE_CMD = 0x9D,
+            CSAFE_GETUSERCFG1_CMD = 0x9E,
+            CSAFE_GETUSERCFG2_CMD = 0x9F,
+            CSAFE_GETTWORK_CMD = 0xA0,
+            CSAFE_GETHORIZONTAL_CMD = 0xA1,
+            CSAFE_GETVERTICAL_CMD = 0xA2,
+            CSAFE_GETCALORIES_CMD = 0xA3,
+            CSAFE_GETPROGRAM_CMD = 0xA4,
+            CSAFE_GETSPEED_CMD = 0xA5,
+            CSAFE_GETPACE_CMD = 0xA6,
+            CSAFE_GETCADENCE_CMD = 0xA7,
+            CSAFE_GETGRADE_CMD = 0xA8,
+            CSAFE_GETGEAR_CMD = 0xA9,
+            CSAFE_GETUPLIST_CMD = 0xAA,
+            CSAFE_GETUSERINFO_CMD = 0xAB,
+            CSAFE_GETTORQUE_CMD = 0xAC,
+            CSAFE_GETHRCUR_CMD = 0xB0,
+            CSAFE_GETHRTZONE_CMD = 0xB2,
+            CSAFE_GETMETS_CMD = 0xB3,
+            CSAFE_GETPOWER_CMD = 0xB4,
+            CSAFE_GETHRAVG_CMD = 0xB5,
+            CSAFE_GETHRMAX_CMD = 0xB6,
+            CSAFE_GETUSERDATA1_CMD = 0xBE,
+            CSAFE_GETUSERDATA2_CMD = 0xBF,
+            CSAFE_GETAUDIOCHANNEL_CMD = 0xC0,
+            CSAFE_GETAUDIOVOLUME_CMD = 0xC1,
+            CSAFE_GETAUDIOMUTE_CMD = 0xC2,
+            CSAFE_ENDTEXT_CMD = 0xE0,
+            CSAFE_DISPLAYPOPUP_CMD = 0xE1,
+            CSAFE_GETPOPUPSTATUS_CMD = 0xE5,
+            CSAFE_AUTOUPLOAD_CMD2 = 0x01,
+            CSAFE_UPLIST_CMD = 0x02,
+            CSAFE_UPSTATUSSEC_CMD = 0x04,
+            CSAFE_UPLISTSEC_CMD = 0x05,
+            CSAFE_IDDIGITS_CMD = 0x10,
+            CSAFE_SETTIME_CMD = 0x11,
+            CSAFE_SETDATE_CMD = 0x12,
+            CSAFE_SETTIMEOUT_CMD = 0x13,
+            CSAFE_SETUSERCFG1_CMD1 = 0x1A,
+            CSAFE_SETUSERCFG2_CMD = 0x1B,
+            CSAFE_SETTWORK_CMD = 0x20,
+            CSAFE_SETHORIZONTAL_CMD = 0x21,
+            CSAFE_SETVERTICAL_CMD = 0x22,
+            CSAFE_SETCALORIES_CMD = 0x23,
+            CSAFE_SETPROGRAM_CMD = 0x24,
+            CSAFE_SETSPEED_CMD = 0x25,
+            CSAFE_SETGRADE_CMD = 0x28,
+            CSAFE_SETGEAR_CMD = 0x29,
+            CSAFE_SETUSERINFO_CMD = 0x2B,
+            CSAFE_SETTORQUE_CMD = 0x2C,
+            CSAFE_SETLEVEL_CMD = 0x2D,
+            CSAFE_SETTARGETHR_CMD = 0x30,
+            CSAFE_SETMETS_CMD = 0x33,
+            CSAFE_SETPOWER_CMD = 0x34,
+            CSAFE_SETHRZONE_CMD = 0x35,
+            CSAFE_SETHRMAX_CMD = 0x36,
+            CSAFE_SETCHANNELRANGE_C = 0x40,
+            CSAFE_SETVOLUMERANGE_C = 0x41,
+            CSAFE_SETAUDIOMUTE_CMD = 0x42,
+            CSAFE_SETAUDIOCHANNEL_C = 0x43,
+            CSAFE_SETAUDIOVOLUME_CM = 0x44,
+            CSAFE_STARTTEXT_CMD = 0x60,
+            CSAFE_APPENDTEXT_CMD = 0x61,
+            CSAFE_GETTEXTSTATUS_CMD = 0x65,
+            CSAFE_GETCAPS_CMD = 0x70,
+            CSAFE_SETPMCFG_CMD = 0x76,
+            CSAFE_SETPMDATA_CMD = 0x77,
+            CSAFE_GETPMCFG_CMD = 0x7E,
+            CSAFE_GETPMDATA_CMD = 0x7F,
+            CSAFE_PM_GET_WORKOUTTYPE = 0x89,
+            CSAFE_PM_GET_DRAGFACTOR = 0xC1,
+            CSAFE_PM_GET_STROKESTATE = 0xBF,
+            CSAFE_PM_GET_WORKTIME = 0x8D,
+            CSAFE_PM_GET_WORKOUTINTERVALCOUNT = 0x9F,
+            CSAFE_PM_GET_INTERVALTYPE = 0x8E,
+            CSAFE_PM_GET_RESTTIME = 0xCF,
+            CSAFE_PM_GET_DISPLAYTYPE = 0xA0,
+            CSAFE_PM_GET_WORKDISTANCE = 0xA3,
+            CSAFE_PM_GET_ERRORVALUE2 = 0xC9,
+            CSAFE_PM_GET_WORKOUTSTATE = 0x8A,
+            CSAFE_PM_GET_DISPLAYUNITS = 0x8B,
+            CSAFE_PM_SET_SPLITDURATION = 0x05,
+            CSAFE_PM_GET_FORCEPLOTDATA = 0x6B,
+            CSAFE_PM_SET_SCREENERRORMODE = 0x27,
+            CSAFE_PM_GET_HEARTBEATDATA = 0x6C,
+            CSAFE_PM_GET_STROKESTATS = 0x6E
         }
 
         [DllImport("PM3DDICP.dll", CallingConvention = CallingConvention.Cdecl)]

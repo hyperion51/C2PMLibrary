@@ -49,8 +49,8 @@ namespace Concept2
             {
                 ushort datasize = 100;
                 uint[] data = new uint[64];
-                ushort error = tkcmdsetCSAFE_command(DeviceNumber, Convert.ToUInt16(CommandsBytes.Count), CommandsBytes.ToArray(), ref datasize, data);
-                if (error != 0 && error != 65370)
+                short error = tkcmdsetCSAFE_command(DeviceNumber, Convert.ToUInt16(CommandsBytes.Count), CommandsBytes.ToArray(), ref datasize, data);
+                if (error != 0)
                 {
                     throw new PMUSBException("Cannot execute a command!", error);
                 }
@@ -60,18 +60,18 @@ namespace Concept2
 
         public class PMUSBException : Exception
         {
-            public PMUSBException(string message, ushort ErrorCode) : base(message)
+            public PMUSBException(string message, short ErrorCode) : base(message)
             {
                 this.ErrorCode = ErrorCode;
-                char[] errorName = new char[64];
-                tkcmdsetDDI_get_error_name(ErrorCode, errorName, 64);
-                this.ErrorName = new string(errorName);
-                char[] errorText = new char[256];
-                tkcmdsetDDI_get_error_text(ErrorCode, errorText, 256);
-                this.ErrorDescription = new string(errorText);
+                StringBuilder nameBuffer = new StringBuilder(new string(' ', 40));
+                tkcmdsetDDI_get_error_name(ErrorCode, nameBuffer, 40);
+                this.ErrorName = nameBuffer.ToString();
+                StringBuilder textBuffer = new StringBuilder(new string(' ', 200));
+                tkcmdsetDDI_get_error_text(ErrorCode, textBuffer, 200);
+                this.ErrorDescription = textBuffer.ToString();
             }
 
-            public ushort ErrorCode { get; }
+            public short ErrorCode { get; }
             public string ErrorName { get; }
             public string ErrorDescription { get; }
         }
@@ -80,7 +80,7 @@ namespace Concept2
         {
             /*try
             {*/
-            ushort error = tkcmdsetDDI_init();
+            short error = tkcmdsetDDI_init();
             if (error != 0)
             {
                 throw new PMUSBException("Cannot initialize a USB connection!", error);
@@ -96,7 +96,7 @@ namespace Concept2
         {
             //try
             //{
-            ushort error = tkcmdsetCSAFE_init_protocol(timeout);
+            short error = tkcmdsetCSAFE_init_protocol(timeout);
             if (error != 0)
             {
                 throw new PMUSBException("Cannot initialize a CSAFE protocol!", error);
@@ -122,7 +122,7 @@ namespace Concept2
             //try
             //{
             ushort count = 0;
-            ushort error = tkcmdsetDDI_discover_pm3s(PMname, 0, ref count);
+            short error = tkcmdsetDDI_discover_pm3s(PMname, 0, ref count);
             if (error != 0)
             {
                 throw new PMUSBException("Cannot initialize a CSAFE protocol!", error);
@@ -137,7 +137,7 @@ namespace Concept2
 
         public static void ShutdownAll()
         {
-            ushort error = tkcmdsetDDI_shutdown_all();
+            short error = tkcmdsetDDI_shutdown_all();
             if (error != 0) throw new PMUSBException("Cannot shutdown all connections!", error);
         }
 
@@ -259,34 +259,34 @@ namespace Concept2
         }
 
         [DllImport("PM3DDICP.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern ushort tkcmdsetDDI_init();
+        private static extern short tkcmdsetDDI_init();
 
         [DllImport("PM3DDICP.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void tkcmdsetDDI_get_error_name(
-            ushort ecode,
-            char[] nameptr,
+            short ecode,
+            StringBuilder nameptr,
             ushort namelen);
 
         [DllImport("PM3DDICP.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern ushort tkcmdsetDDI_shutdown_all();
+        private static extern short tkcmdsetDDI_shutdown_all();
 
         [DllImport("PM3DDICP.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void tkcmdsetDDI_get_error_text(
-            ushort ecode,
-            char[] textptr,
+            short ecode,
+            StringBuilder textptr,
             ushort textlen);
 
         [DllImport("PM3DDICP.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern ushort tkcmdsetDDI_discover_pm3s(
+        private static extern short tkcmdsetDDI_discover_pm3s(
            string product_name,
            ushort starting_address,
            ref ushort num_units);
 
         [DllImport("PM3CsafeCP.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern ushort tkcmdsetCSAFE_init_protocol(ushort timeout);
+        private static extern short tkcmdsetCSAFE_init_protocol(ushort timeout);
 
         [DllImport("PM3CsafeCP.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern ushort tkcmdsetCSAFE_command(
+        private static extern short tkcmdsetCSAFE_command(
            ushort unit_address,
            ushort cmd_data_size,
            uint[] cmd_data,

@@ -60,30 +60,31 @@ namespace Concept2
         public void Test()
         {
             PMUSBInterface.CSAFECommand cmd = CreateCommand();
-            cmd.CommandsBytes.Add((uint)0x21);
-            cmd.CommandsBytes.Add((uint)0x03);
-            cmd.CommandsBytes.Add((uint)0x03);
-            cmd.CommandsBytes.Add((uint)0x00);
-            cmd.CommandsBytes.Add((uint)0x21);
-            cmd.CommandsBytes.Add((uint)0x1a);
-            cmd.CommandsBytes.Add((uint)0x07);
-            cmd.CommandsBytes.Add((uint)0x05);
-            cmd.CommandsBytes.Add((uint)0x05);
-            cmd.CommandsBytes.Add((uint)0x80);
-            cmd.CommandsBytes.Add((uint)0xf4);
-            cmd.CommandsBytes.Add((uint)0x01);
-            cmd.CommandsBytes.Add((uint)0x00);
-            cmd.CommandsBytes.Add((uint)0x00);
-            cmd.CommandsBytes.Add((uint)0x34);
-            cmd.CommandsBytes.Add((uint)0x03);
-            cmd.CommandsBytes.Add((uint)0x2c);
-            cmd.CommandsBytes.Add((uint)0x01);
-            cmd.CommandsBytes.Add((uint)0x58);
-            cmd.CommandsBytes.Add((uint)0x24);
-            cmd.CommandsBytes.Add((uint)0x02);
-            cmd.CommandsBytes.Add((uint)0x00);
-            cmd.CommandsBytes.Add((uint)0x00);
-            cmd.CommandsBytes.Add((uint)0x85);
+            cmd.CommandsBytes.Add(0x21);
+            cmd.CommandsBytes.Add(0x03);
+            cmd.CommandsBytes.Add(0x02);
+            cmd.CommandsBytes.Add(0x00);
+            cmd.CommandsBytes.Add(0x21);
+            cmd.CommandsBytes.Add(0x1a);
+            cmd.CommandsBytes.Add(0x07);
+            cmd.CommandsBytes.Add(0x05);
+            cmd.CommandsBytes.Add(0x05);
+            cmd.CommandsBytes.Add(0x80);
+            cmd.CommandsBytes.Add(0xf4);
+            cmd.CommandsBytes.Add(0x01);
+            cmd.CommandsBytes.Add(0x00);
+            cmd.CommandsBytes.Add(0x00);
+            cmd.CommandsBytes.Add(0x34);
+            cmd.CommandsBytes.Add(0x03);
+            cmd.CommandsBytes.Add(0x2c);
+            cmd.CommandsBytes.Add(0x01);
+            cmd.CommandsBytes.Add(0x58);
+            cmd.CommandsBytes.Add(0x24);
+            cmd.CommandsBytes.Add(0x02);
+            cmd.CommandsBytes.Add(0x00);
+            cmd.CommandsBytes.Add(0x00);
+            cmd.CommandsBytes.Add(0x85);
+
             List<uint> ret = cmd.Execute();
         }
 

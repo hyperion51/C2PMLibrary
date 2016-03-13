@@ -47,10 +47,10 @@ namespace Concept2
 
             public List<uint> Execute()
             {
-                ushort datasize = 0;
+                ushort datasize = 100;
                 uint[] data = new uint[64];
                 ushort error = tkcmdsetCSAFE_command(DeviceNumber, Convert.ToUInt16(CommandsBytes.Count), CommandsBytes.ToArray(), ref datasize, data);
-                if (error != 0)
+                if (error != 0 && error != 65370)
                 {
                     throw new PMUSBException("Cannot execute a command!", error);
                 }

@@ -57,12 +57,59 @@ namespace Concept2
             cmd.Execute();
         }
 
+        public List<uint> GetHorizontalDistance()
+        {
+            PMUSBInterface.CSAFECommand cmd = CreateCommand();
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_GETHORIZONTAL_CMD);
+            List<uint> data = cmd.Execute();
+            return data;
+        }
+
+        public void SetHorizontalDistance(int value, PMUSBInterface.CSAFEUnits unit)
+        {
+            PMUSBInterface.CSAFECommand cmd = CreateCommand();
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_SETHORIZONTAL_CMD);
+            cmd.CommandsBytes.Add(0x03);
+            byte[] bytes = BitConverter.GetBytes(value);
+            /*switch (unit)
+            {
+                case PMUSBInterface.CSAFEUnits.Kilometers:
+                    cmd.CommandsBytes.Add(bytes[0]);
+                    cmd.CommandsBytes.Add(0x00);
+                    break;
+                case PMUSBInterface.CSAFEUnits.Meters:*/
+            cmd.CommandsBytes.Add(bytes[0]);
+            cmd.CommandsBytes.Add(bytes[1]);
+            /*        break;
+            }*/
+            cmd.CommandsBytes.Add((uint)unit);
+            //cmd.CommandsBytes.Add(0x85);
+            cmd.Execute();
+        }
+
+        public void SetWorkout(PMUSBInterface.WorkoutTypes type)
+        {
+            PMUSBInterface.CSAFECommand cmd = CreateCommand();
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_SETPROGRAM_CMD);
+            cmd.CommandsBytes.Add(0x02);
+            cmd.CommandsBytes.Add((uint) type);
+            cmd.CommandsBytes.Add(0x00);
+            cmd.Execute();
+        }
+
+        public void GoInUse()
+        {
+            PMUSBInterface.CSAFECommand cmd = CreateCommand();
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_GOINUSE_CMD);
+            cmd.Execute();
+        }
+
         public void Test()
         {
             PMUSBInterface.CSAFECommand cmd = CreateCommand();
-            cmd.CommandsBytes.Add(0x21);
+            /*cmd.CommandsBytes.Add(0x21);
             cmd.CommandsBytes.Add(0x03);
-            cmd.CommandsBytes.Add(0x02);
+            cmd.CommandsBytes.Add(0x03);
             cmd.CommandsBytes.Add(0x00);
             cmd.CommandsBytes.Add(0x21);
             cmd.CommandsBytes.Add(0x1a);
@@ -78,7 +125,7 @@ namespace Concept2
             cmd.CommandsBytes.Add(0x03);
             cmd.CommandsBytes.Add(0x2c);
             cmd.CommandsBytes.Add(0x01);
-            cmd.CommandsBytes.Add(0x58);
+            cmd.CommandsBytes.Add(0x58);*/
             cmd.CommandsBytes.Add(0x24);
             cmd.CommandsBytes.Add(0x02);
             cmd.CommandsBytes.Add(0x00);

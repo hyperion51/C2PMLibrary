@@ -108,6 +108,18 @@ namespace Concept2
             }*/
         }
 
+        //little tweak to developers
+        public static string BytesToCMDstring(uint[] bytes)
+        {
+            string str = "";
+            foreach (uint byt in bytes)
+            {
+                CSAFECommands enumCSAFECommands = (CSAFECommands)byt;
+                str += enumCSAFECommands.ToString() + " ";
+            }
+            return str;
+        }
+
         public static ushort DiscoverPMs(PMtype PMType)
         {
             string PMname = "";
@@ -149,6 +161,22 @@ namespace Concept2
             PM3TESTER_PRODUCT_NAME,
             PM4_PRODUCT_NAME,
             PM5_PRODUCT_NAME,
+        }
+
+        public enum CSAFEUnits : uint
+        {
+            Meters = 0x24,
+            Kilometers = 0x21
+        }
+
+        public enum WorkoutTypes : uint
+        {
+            Programmed = 0x00,
+            TwoKm500Split = 0x01,
+            FiveKm1000Split = 0x02,
+            TenKm2000Split = 0x03,
+            ThirdyMin6minSplit = 0x04,
+            FiftyMetersIntMinuteRest = 0x05
         }
 
         public enum CSAFECommands : uint

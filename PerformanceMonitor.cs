@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Concept2
 {
@@ -57,12 +58,38 @@ namespace Concept2
             cmd.Execute();
         }
 
-        public List<uint> GetHorizontalDistance()
+        public uint GetHorizontalDistance()
         {
             PMUSBInterface.CSAFECommand cmd = CreateCommand();
             cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_GETHORIZONTAL_CMD);
             List<uint> data = cmd.Execute();
-            return data;
+            uint dist = (data[3] * 256) + data[2];
+            return dist;
+        }
+
+        public TimeSpan GetTimeWork()
+        {
+            PMUSBInterface.CSAFECommand cmd = CreateCommand();
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_GETTWORK_CMD);
+            List<uint> data = cmd.Execute();
+            return new TimeSpan((int)data[2], (int)data[3], (int)data[4]);
+        }
+
+        public TimeSpan GetWorkTime()
+        {
+            while (true)
+            {
+                PMUSBInterface.CSAFECommand cmd = CreateCommand();
+                cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_SETUSERCFG1_CMD1);
+                cmd.CommandsBytes.Add(0x01);
+                cmd.CommandsBytes.Add(0xA0); //worktime CSAFE_PM_GET_WORKTIME
+                List<uint> data = cmd.Execute();
+                Console.Clear();
+                Console.WriteLine(data[2] + "," + data[3] + "," + data[4] + "," + data[5] + "," + data[6] + "," + data[7] + "," + data[8] + "," + data[9] + "," + data[10]);
+                Thread.Sleep(100);
+            }
+                TimeSpan t = new TimeSpan();
+            return t;            
         }
 
         public void SetHorizontalDistance(int value, PMUSBInterface.CSAFEUnits unit)
@@ -84,6 +111,20 @@ namespace Concept2
             }*/
             cmd.CommandsBytes.Add((uint)unit);
             //cmd.CommandsBytes.Add(0x85);
+            cmd.Execute();
+        }
+
+        public void SetTimeWork(TimeSpan time)
+        {
+            PMUSBInterface.CSAFECommand cmd = CreateCommand();
+            cmd.CommandsBytes.Add((uint)PMUSBInterface.CSAFECommands.CSAFE_SETTWORK_CMD);
+            cmd.CommandsBytes.Add(0x03);
+            //cmd.CommandsBytes.Add(0x00);
+            //cmd.CommandsBytes.Add(0x07);
+            //cmd.CommandsBytes.Add(0x1E);
+            cmd.CommandsBytes.Add(BitConverter.GetBytes(time.Hours)[0]);
+            cmd.CommandsBytes.Add(BitConverter.GetBytes(time.Minutes)[0]);
+            cmd.CommandsBytes.Add(BitConverter.GetBytes(time.Seconds)[0]);
             cmd.Execute();
         }
 
